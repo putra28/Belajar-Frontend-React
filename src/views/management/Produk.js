@@ -71,12 +71,8 @@ const ManageProduk = () => {
         'Authorization': token ? `${token}` : ''
       };
 
-    // Fetch subkategori data
-    const subkategoriRes = await fetch(`${API_BASE_URL}/kategori/getdatasubkategori`, { headers });
-    const subkategoriData = await subkategoriRes.json();
-    setSubkategori(subkategoriData.data);
     // Fetch kategori data
-    const kategoriRes = await fetch(`${API_BASE_URL}/kategori/getdatamainkategori`, { headers });
+    const kategoriRes = await fetch(`${API_BASE_URL}/kategori/getdatakategori`, { headers });
     const kategoriData = await kategoriRes.json();
     setKategori(kategoriData.data);
 
@@ -99,6 +95,13 @@ const ManageProduk = () => {
   useEffect(() => {
     fetchData();
   }, []);
+
+  const handleKategoriChange = (e) => {
+    const kategoriId = e.target.value;
+    const selectedKategori = kategori.find((kat) => kat.v_id_kategori === parseInt(kategoriId));
+    const subkategori = selectedKategori.v_subkategori;
+    setSubkategori(subkategori);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -213,10 +216,12 @@ const ManageProduk = () => {
     {
       name: 'Aksi',
       cell: (row) => (
-        <>
-          <TransparentButton onClick={() => handleDelete(row.v_id_produk)}>Hapus</TransparentButton>
-        </>
+        <TransparentButton onClick={() => handleDelete(row.v_id_produk)}>
+          Hapus
+        </TransparentButton>
       ),
+      center: true,
+      width: '150px',
     },
   ];
 
@@ -260,13 +265,16 @@ const ManageProduk = () => {
                 <CFormSelect
                   id="selectedKategori"
                   name="selectedKategori"
-                  onChange={handleInputChange}
-                  value={formData.selectedKategori}
+                  onChange={(e) => {
+                    handleInputChange(e);
+                    handleKategoriChange(e);
+                  }}
+                  value={kategori}
                 >
                   <option value="">Pilih Kategori</option>
                   {kategori.map((kat) => (
-                    <option key={kat.v_id_kategori} value={kat.v_name_kategori}>
-                      {kat.v_name_kategori}
+                    <option key={kat.v_id_kategori} value={kat.v_id_kategori}>
+                      {kat.v_nama_kategori}
                     </option>
                   ))}
                 </CFormSelect>
@@ -285,13 +293,18 @@ const ManageProduk = () => {
                   value={formData.selectedSubkategori}
                 >
                   <option value="">Pilih Sub-Kategori</option>
-                  {subkategori
+                  {subkategori.map((sub) => (
+                    <option key={sub.v_id_subkategori} value={sub.v_id_subkategori}>
+                      {sub.v_nama_subkategori}
+                    </option>
+                  ))}
+                  {/* {subkategori
                     .filter(sub => sub.v_name_kategori === formData.selectedKategori)
                     .map((sub) => (
                       <option key={sub.v_name_subkategori} value={sub.v_name_subkategori}>
                         {sub.v_name_subkategori}
                       </option>
-                    ))}
+                    ))} */}
                 </CFormSelect>
               </CCol>
             </CRow>
@@ -347,20 +360,14 @@ const ManageProduk = () => {
                 <CFormLabel htmlFor="selectedKategoriedit" className="col-form-label">Kategori</CFormLabel>
               </CCol>
               <CCol sm={8}>
-                <CFormSelect
+                <CFormInput
+                  type="text"
                   id="selectedKategoriedit"
                   name="selectedKategoriedit"
-                  onChange={handleInputChange}
                   value={formData.selectedKategoriedit}
+                  onChange={handleInputChange}
                   disabled
-                >
-                  <option value="">Pilih Kategori</option>
-                  {kategori.map((kat) => (
-                    <option key={kat.v_id_kategori} value={kat.v_name_kategori}>
-                      {kat.v_name_kategori}
-                    </option>
-                  ))}
-                </CFormSelect>
+                />
               </CCol>
             </CRow>
             <CRow className="mb-3">
