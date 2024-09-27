@@ -1,33 +1,16 @@
-import React, { useEffect, useState, createRef } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
-  CCard,
-  CCardBody,
-  CCardHeader,
-  CToast,
-  CToastBody,
-  CButton,
-  CToastHeader,
-  CModal,
-  CModalBody,
-  CModalHeader,
-  CModalFooter,
-  CModalTitle,
-  CForm,
-  CFormLabel,
-  CFormInput,
-  CFormSelect,
-  CInputGroup,
-  CInputGroupText,
-  CRow,
-  CCol
+  CCard, CCardBody, CCardHeader, CToast, CToastBody, CButton,
+  CToastHeader, CModal, CModalBody, CModalHeader, CModalFooter,
+  CModalTitle, CForm, CFormLabel, CFormInput, CFormSelect,
+  CInputGroup, CInputGroupText, CRow, CCol
 } from '@coreui/react'
 import DataTable, { createTheme } from 'react-data-table-component'
-import 'react-toastify/dist/ReactToastify.css'
 import styled from 'styled-components'
 
 const GradientButton = styled(CButton)`
   background: linear-gradient(135deg, #1c1b38, #3b398c, #6261cc);
-  border: 0px;
+  border: 0;
   color: white;
   border-radius: 4px;
   padding: 8px;
@@ -35,6 +18,23 @@ const GradientButton = styled(CButton)`
   width: 150px;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.6);
 `;
+
+const TransparentButton = styled(CButton)`
+  background: transparent;
+  border: 2px solid #3b398c; /* Border berwarna primary */
+  color: #3b398c; /* Sesuaikan warna teks jika diperlukan */
+  border-radius: 4px;
+  padding: 8px;
+  margin-right: 10px;
+  width: 150px;
+  box-shadow: 0px 8px 20px rgba(59, 57, 140, 0.6); /* Shadow berwarna primary */
+  transition: all 0.3s ease;
+
+`;
+
+
+
+const API_BASE_URL = 'http://168.168.10.12:2805/api';
 
 const ManageProduk = () => {
   const [data, setData] = useState([]);
@@ -44,59 +44,55 @@ const ManageProduk = () => {
   const [loading, setLoading] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [visible, setVisible] = useState(false);
+  const [visibleupdate, setVisibleUpdate] = useState(false);
   const [kategori, setKategori] = useState([]);
   const [subkategori, setSubkategori] = useState([]);
-  const [selectedKategori, setSelectedKategori] = useState('');
-  const [selectedSubkategori, setSelectedSubkategori] = useState('');
-  const [namaProduk, setNamaProduk] = useState('');
-  const [hargaProduk, setHargaProduk] = useState('');
+  const [formData, setFormData] = useState({
+    selectedKategori: '',
+    selectedSubkategori: '',
+    namaProduk: '',
+    hargaProduk: '',
+    idProdukedit: '',
+    idKategoriedit: '',
+    idSubKategoriedit: '',
+    namaProdukedit: '',
+    hargaProdukedit: '',
+    stokProdukedit: '',
+    selectedKategoriedit: '',
+    selectedSubkategoriedit: ''
+  });
 
   const fetchData = async () => {
     setLoading(true);
     try {
       const token = localStorage.getItem('token');
-      const response = await fetch('http://168.168.10.12:2805/api/produk/getdataproduk', {
-          method: 'GET', // Pastikan menggunakan method GET
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token ? `${token}` : '' // Menambahkan header Authorization
-          }
-      });
-      const response_subkategori = await fetch('http://168.168.10.12:2805/api/kategori/getdatasubkategori', {
-          method: 'GET', // Pastikan menggunakan method GET
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token ? `${token}` : '' // Menambahkan header Authorization
-          }
-      });
-      const response_kategori = await fetch('http://168.168.10.12:2805/api/kategori/getdatamainkategori', {
-          method: 'GET', // Pastikan menggunakan method GET
-          headers: {
-              'Content-Type': 'application/json',
-              'Authorization': token ? `${token}` : '' // Menambahkan header Authorization
-          }
-      });
-      const result = await response.json();
-      const result_subkategori = await response_subkategori.json();
-      const result_kategori = await response_kategori.json();
-      console.log(result);
-      if (result.status === 200) {
-        setData(result.data);
-        setToastMessage(result.notification_response);
-        setToastType('Berhasil');
-        setSubkategori(result_subkategori.data);
-        setKategori(result_kategori.data);
-      } else {
-        setData([]);
-        setToastMessage(result.notification_response);
-        setToastType('Gagal');
-      }
-    } catch (error) {
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `${token}` : ''
+      };
+
+    // Fetch subkategori data
+    const subkategoriRes = await fetch(`${API_BASE_URL}/kategori/getdatasubkategori`, { headers });
+    const subkategoriData = await subkategoriRes.json();
+    setSubkategori(subkategoriData.data);
+    // Fetch kategori data
+    const kategoriRes = await fetch(`${API_BASE_URL}/kategori/getdatamainkategori`, { headers });
+    const kategoriData = await kategoriRes.json();
+    setKategori(kategoriData.data);
+
+    const produkRes = await fetch(`${API_BASE_URL}/produk/getdataproduk`, { headers });
+    const produkData = await produkRes.json();
+    if (produkData.status === 200) {
+      setData(produkData.data);
+    } else {
       setData([]);
-      setToastMessage('Gagal mengambil data');
-      setToastType('Gagal');
+      showToastMessage('Gagal mengambil data produk', 'Gagal');
+      return;
     }
-    setShowToast(true);
+    } catch (error) {
+      console.error('Error fetching data:', error);
+      showToastMessage('Terjadi kesalahan saat mengambil data', 'Gagal');
+    }
     setLoading(false);
   };
 
@@ -104,142 +100,137 @@ const ManageProduk = () => {
     fetchData();
   }, []);
 
-  const handleKategoriChange = (e) => {
-    const selected = e.target.value;
-    setSelectedKategori(selected);
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleSubkategoriChange = (e) => {
-    setSelectedSubkategori(e.target.value);
-  };
-
-  // Handle perubahan nama produk
-  const handleNamaProdukChange = (e) => {
-    setNamaProduk(e.target.value);
-  };
-
-  // Handle perubahan harga produk
-  const handleHargaProdukChange = (e) => {
-    setHargaProduk(e.target.value);
-  };
-
-  // Handle submit form
   const handleSubmit = async (e) => {
     e.preventDefault();
-
-    const formData = {
-      p_id_kategori: selectedKategori,
-      p_id_subkategori: selectedSubkategori,
-      p_nama_produk: namaProduk,
-      p_harga_produk: hargaProduk
+    const submitData = {
+      p_id_kategori: formData.selectedKategori,
+      p_id_subkategori: formData.selectedSubkategori,
+      p_nama_produk: formData.namaProduk,
+      p_harga_produk: parseInt(formData.hargaProduk, 10),
     };
 
-    // Cetak JSON ke console
-    console.log('Data Produk:', JSON.stringify(formData));
-
     try {
-        const token = localStorage.getItem('token');
-        const response = await fetch(`http://168.168.10.12:2805/api/produk/adddataproduk`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token ? `${token}` : ''
-            },
-            body: JSON.stringify(formData)
-        });
-        const response_get = await fetch('http://168.168.10.12:2805/api/produk/getdataproduk', {
-            method: 'GET', // Pastikan menggunakan method GET
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': token ? `${token}` : '' // Menambahkan header Authorization
-            }
-        });
-
-        if (!response.ok) {
-            throw new Error('Network response was not ok');
-        }
-
-        const data = await response.json();
-        const result = await response_get.json();
-        console.log('Response dari server:', data);
-        if (data.status === 200) {
-          // fetchData();
-          setData(result.data);
-          setToastMessage('Berhasil menambahkan produk');
-          setToastType('Berhasil');
-        } else {
-          setToastMessage('Gagal menambahkan produk');
-          setToastType('Gagal');
-        }
-        setVisible(false);
+      const response = await sendRequest('produk/adddataproduk', 'POST', submitData);
+      if (response.status === 200) {
+        await fetchData();
+        showToastMessage('Berhasil menambahkan produk', 'Berhasil');
+      } else {
+        showToastMessage('Gagal menambahkan produk', 'Gagal');
+      }
+      setVisible(false);
     } catch (error) {
-      setToastMessage('Terjadi Kesalahan');
-      setToastType('Gagal');
-      console.error('Terjadi kesalahan:', error);
+      showToastMessage('Terjadi Kesalahan', 'Gagal');
     }
-    setShowToast(true);
   };
 
-  const filteredSubkategori = subkategori.filter(
-    (sub) => sub.v_name_kategori === selectedKategori
-  );
+  const handleSubmitedit = async (e) => {
+    e.preventDefault();
+    const submitData = {
+      p_id_produk: formData.idProdukedit,
+      p_id_subkategori: formData.idSubKategoriedit,
+      p_nama_produk: formData.namaProdukedit,
+      p_harga_produk: parseInt(formData.hargaProdukedit, 10),
+      p_stok_produk: parseInt(formData.stokProdukedit, 10),
+    };
+
+    try {
+      const response = await sendRequest('produk/updatedataproduk', 'POST', submitData);
+      if (response.status === 200) {
+        await fetchData();
+        showToastMessage('Berhasil mengubah produk', 'Berhasil');
+      } else {
+        showToastMessage('Gagal mengubah produk', 'Gagal');
+      }
+      setVisibleUpdate(false);
+    } catch (error) {
+      showToastMessage('Terjadi Kesalahan', 'Gagal');
+    }
+  };
+
+  const handleEdit = (row) => {
+    setFormData({
+      idProdukedit: row.v_id_produk,
+      idKategoriedit: row.v_id_kategori,
+      idSubKategoriedit: row.v_id_subkategori,
+      namaProdukedit: row.v_nama_produk,
+      hargaProdukedit: row.v_harga_produk,
+      stokProdukedit: row.v_stok_produk,
+      selectedKategoriedit: row.v_kategori_produk,
+      selectedSubkategoriedit: row.v_subkategori_produk
+    });
+    setVisibleUpdate(true);
+  };
+
+  const handleDelete = async (productId) => {
+    try {
+      const response = await sendRequest('produk/deletedataproduk', 'POST', { p_id_produk: productId });
+      if (response.status === 200) {
+        await fetchData();
+        showToastMessage('Berhasil menghapus produk', 'Berhasil');
+      } else {
+        showToastMessage('Gagal menghapus produk', 'Gagal');
+      }
+    } catch (error) {
+      showToastMessage('Terjadi Kesalahan', 'Gagal');
+    }
+  };
+
+  const sendRequest = async (endpoint, method, body) => {
+    const token = localStorage.getItem('token');
+    const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
+      method,
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': token ? `${token}` : ''
+      },
+      body: JSON.stringify(body)
+    });
+    return response.json();
+  };
+
+  const showToastMessage = (message, type) => {
+    setToastMessage(message);
+    setToastType(type);
+    setShowToast(true);
+  };
 
   const formatRupiah = (number) => {
     return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(number);
   };
 
   const columnsProduk = [
+    { name: 'No.', selector: (row, index) => index + 1, sortable: true },
+    { name: 'Kategori', selector: row => row.v_kategori_produk, sortable: true },
+    { name: 'Sub-Kategori', selector: row => row.v_subkategori_produk, sortable: true },
+    { name: 'Nama Produk', selector: row => row.v_nama_produk, sortable: true },
+    { name: 'Harga Produk', selector: row => formatRupiah(row.v_harga_produk), sortable: true },
+    { name: 'Stok Produk', selector: row => row.v_stok_produk, sortable: true },
     {
-      name: 'No.',
-      selector: (row, index) => index + 1,
-      sortable: true,
-    },
-    {
-      name: 'Kategori',
-      selector: row => row.v_kategori_produk,
-      sortable: true,
-    },
-    {
-      name: 'Sub-Kategori',
-      selector: row => row.v_subkategori_produk,
-      sortable: true,
-    },
-    {
-      name: 'Nama Produk',
-      selector: row => row.v_nama_produk,
-      sortable: true,
-    },
-    {
-      name: 'Harga Produk',
-      selector: row => formatRupiah(row.v_harga_produk),
-      sortable: true,
-    },
-    {
-      name: 'Stok Produk',
-      selector: row => row.v_stok_produk,
-      sortable: true,
+      name: 'Aksi',
+      cell: (row) => (
+        <>
+          <TransparentButton onClick={() => handleDelete(row.v_id_produk)}>Hapus</TransparentButton>
+        </>
+      ),
     },
   ];
 
   const filteredData = data.filter(item =>
-    Object.values(item).some(
-      val => val.toString().toLowerCase().includes(searchTerm.toLowerCase())
-    )
+    Object.values(item).some(val => val.toString().toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
-  // createTheme creates a new theme named solarized that overrides the build in dark theme
   createTheme('transparent', {
-    text: {
-      primary: 'white',
-    },
-    background: {
-      default: 'transparent',
-    }
+    text: { primary: 'white' },
+    background: { default: 'transparent' }
   }, 'dark');
 
   return (
     <>
-      {/* Toast notification */}
       {showToast && (
         <CToast
           autohide={false}
@@ -248,99 +239,93 @@ const ManageProduk = () => {
           style={{ zIndex: 1060 }}
           onClick={() => setShowToast(false)}
         >
-          <CToastHeader
-            style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)' }}
-          >
+          <CToastHeader style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)' }}>
             <strong className="me-auto">{toastType}</strong>
           </CToastHeader>
-          <CToastBody>
-            {toastMessage}
-          </CToastBody>
+          <CToastBody>{toastMessage}</CToastBody>
         </CToast>
       )}
 
-      <CModal
-        visible={visible}
-        onClose={() => setVisible(false)}
-        aria-labelledby="LiveDemoExampleLabel"
-      >
+      <CModal visible={visible} onClose={() => setVisible(false)} aria-labelledby="ModalAddProduk">
         <CModalHeader style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)'}}>
-          <CModalTitle id="LiveDemoExampleLabel">Tambah Data Produk</CModalTitle>
+          <CModalTitle id="ModalAddProduk">Tambah Data Produk</CModalTitle>
         </CModalHeader>
         <CForm onSubmit={handleSubmit}>
           <CModalBody>
-              <CRow className="mb-3">
-                <CCol sm={4} >
-                  <CFormLabel htmlFor="txt_kategori" className="col-sm-2 col-form-label">Kategori</CFormLabel>
-                </CCol>
-                <CCol sm={8} >
+            <CRow className="mb-3">
+              <CCol sm={4}>
+                <CFormLabel htmlFor="selectedKategori" className="col-form-label">Kategori</CFormLabel>
+              </CCol>
+              <CCol sm={8}>
                 <CFormSelect
-                  id="txt_kategori"
-                  name="txt_kategori"
-                  onChange={handleKategoriChange}
-                  value={selectedKategori}
+                  id="selectedKategori"
+                  name="selectedKategori"
+                  onChange={handleInputChange}
+                  value={formData.selectedKategori}
                 >
                   <option value="">Pilih Kategori</option>
-                    {kategori.map((kat) => (
-                      <option key={kat.v_id_kategori} value={kat.v_name_kategori}>
-                        {kat.v_name_kategori}
-                      </option>
-                    ))}
+                  {kategori.map((kat) => (
+                    <option key={kat.v_id_kategori} value={kat.v_name_kategori}>
+                      {kat.v_name_kategori}
+                    </option>
+                  ))}
                 </CFormSelect>
-                </CCol>
-              </CRow>
-              <CRow className="mb-3">
-                <CCol sm={4} style={{ display: 'flex', alignItems: 'center' }}>
-                  <CFormLabel htmlFor="txt_subkategori">Sub-Kategori</CFormLabel>
-                </CCol>
-                <CCol sm={8} >
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol sm={4}>
+                <CFormLabel htmlFor="selectedSubkategori">Sub-Kategori</CFormLabel>
+              </CCol>
+              <CCol sm={8}>
                 <CFormSelect
-                  id="txt_subkategori"
-                  name="txt_subkategori"
-                  disabled={!selectedKategori || filteredSubkategori.length === 0}
-                  onChange={handleSubkategoriChange}
-                  value={selectedSubkategori}
+                  id="selectedSubkategori"
+                  name="selectedSubkategori"
+                  disabled={!formData.selectedKategori}
+                  onChange={handleInputChange}
+                  value={formData.selectedSubkategori}
                 >
                   <option value="">Pilih Sub-Kategori</option>
-                    {filteredSubkategori.map((sub) => (
+                  {subkategori
+                    .filter(sub => sub.v_name_kategori === formData.selectedKategori)
+                    .map((sub) => (
                       <option key={sub.v_name_subkategori} value={sub.v_name_subkategori}>
                         {sub.v_name_subkategori}
                       </option>
                     ))}
                 </CFormSelect>
-                </CCol>
-              </CRow>
-              <CRow className="mb-3">
-                <CCol sm={4} style={{ display: 'flex', alignItems: 'center' }}>
-                  <CFormLabel htmlFor="txt_nama_produk">Nama Produk</CFormLabel>
-                </CCol>
-                <CCol sm={8} >
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol sm={4}>
+                <CFormLabel htmlFor="namaProduk">Nama Produk</CFormLabel>
+              </CCol>
+              <CCol sm={8}>
+                <CFormInput
+                  type="text"
+                  id="namaProduk"
+                  name="namaProduk"
+                  value={formData.namaProduk}
+                  onChange={handleInputChange}
+                />
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol sm={4}>
+                <CFormLabel htmlFor="hargaProduk">Harga Produk</CFormLabel>
+              </CCol>
+              <CCol sm={8}>
+                <CInputGroup>
+                  <CInputGroupText id="basic-addon1">Rp.</CInputGroupText>
                   <CFormInput
-                    type="text"
-                    id="txt_nama_produk"
-                    name="txt_nama_produk"
-                    value={namaProduk}
-                    onChange={handleNamaProdukChange}
+                    type="number"
+                    id="hargaProduk"
+                    name="hargaProduk"
+                    value={formData.hargaProduk}
+                    onChange={handleInputChange}
                   />
-                </CCol>
-              </CRow>
-              <CRow className="mb-3">
-                <CCol sm={4} style={{ display: 'flex', alignItems: 'center' }}>
-                  <CFormLabel htmlFor="txt_harga_produk">Harga Produk</CFormLabel>
-                </CCol>
-                <CCol sm={8} >
-                  <CInputGroup className="mb-3">
-                    <CInputGroupText id="basic-addon1">Rp.</CInputGroupText>
-                    <CFormInput
-                      type="number"
-                      id="txt_harga_produk"
-                      name="txt_harga_produk"
-                      value={hargaProduk}
-                      onChange={handleHargaProdukChange}
-                    />
-                  </CInputGroup>
-                </CCol>
-              </CRow>
+                </CInputGroup>
+              </CCol>
+            </CRow>
           </CModalBody>
           <CModalFooter>
             <CButton style={{ background: 'linear-gradient(135deg, #450707, #a10808)', border: '0px' }} onClick={() => setVisible(false)}>
@@ -351,18 +336,118 @@ const ManageProduk = () => {
         </CForm>
       </CModal>
 
-      {/* Table to display product data */}
+      <CModal visible={visibleupdate} onClose={() => setVisibleUpdate(false)} aria-labelledby="ModalUpdateProduk">
+        <CModalHeader style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)'}}>
+          <CModalTitle id="ModalUpdateProduk">Update Data Produk</CModalTitle>
+        </CModalHeader>
+        <CForm onSubmit={handleSubmitedit}>
+          <CModalBody>
+            <CRow className="mb-3">
+              <CCol sm={4}>
+                <CFormLabel htmlFor="selectedKategoriedit" className="col-form-label">Kategori</CFormLabel>
+              </CCol>
+              <CCol sm={8}>
+                <CFormSelect
+                  id="selectedKategoriedit"
+                  name="selectedKategoriedit"
+                  onChange={handleInputChange}
+                  value={formData.selectedKategoriedit}
+                  disabled
+                >
+                  <option value="">Pilih Kategori</option>
+                  {kategori.map((kat) => (
+                    <option key={kat.v_id_kategori} value={kat.v_name_kategori}>
+                      {kat.v_name_kategori}
+                    </option>
+                  ))}
+                </CFormSelect>
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol sm={4}>
+                <CFormLabel htmlFor="selectedSubkategoriedit">Sub-Kategori</CFormLabel>
+              </CCol>
+              <CCol sm={8}>
+                <CFormSelect
+                  id="selectedSubkategoriedit"
+                  name="selectedSubkategoriedit"
+                  onChange={handleInputChange}
+                  value={formData.selectedSubkategoriedit}
+                >
+                  <option value="">Pilih Sub-Kategori</option>
+                  {subkategori
+                    .filter(sub => sub.v_name_kategori === formData.selectedKategoriedit)
+                    .map((sub) => (
+                      <option key={sub.v_name_subkategori} value={sub.v_name_subkategori}>
+                        {sub.v_name_subkategori}
+                      </option>
+                    ))}
+                </CFormSelect>
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol sm={4}>
+                <CFormLabel htmlFor="namaProdukedit">Nama Produk</CFormLabel>
+              </CCol>
+              <CCol sm={8}>
+                <CFormInput
+                  type="text"
+                  id="namaProdukedit"
+                  name="namaProdukedit"
+                  value={formData.namaProdukedit}
+                  onChange={handleInputChange}
+                />
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol sm={4}>
+                <CFormLabel htmlFor="hargaProdukedit">Harga Produk</CFormLabel>
+              </CCol>
+              <CCol sm={8}>
+                <CInputGroup>
+                  <CInputGroupText id="basic-addon1">Rp.</CInputGroupText>
+                  <CFormInput
+                    type="number"
+                    id="hargaProdukedit"
+                    name="hargaProdukedit"
+                    value={formData.hargaProdukedit}
+                    onChange={handleInputChange}
+                  />
+                </CInputGroup>
+              </CCol>
+            </CRow>
+            <CRow className="mb-3">
+              <CCol sm={4}>
+                <CFormLabel htmlFor="stokProdukedit">Stok Produk</CFormLabel>
+              </CCol>
+              <CCol sm={8}>
+                <CInputGroup>
+                  <CFormInput
+                    type="number"
+                    id="stokProdukedit"
+                    name="stokProdukedit"
+                    value={formData.stokProdukedit}
+                    onChange={handleInputChange}
+                  />
+                  <CInputGroupText id="basic-addon2">Qty.</CInputGroupText>
+                </CInputGroup>
+              </CCol>
+            </CRow>
+          </CModalBody>
+          <CModalFooter>
+            <CButton style={{ background: 'linear-gradient(135deg, #450707, #a10808)', border: '0px' }} onClick={() => setVisibleUpdate(false)}>
+              Close
+            </CButton>
+            <CButton style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)', border: '0px' }} type="submit">Save changes</CButton>
+          </CModalFooter>
+        </CForm>
+      </CModal>
+
       <CCard className="mb-4">
-        <CCardHeader>
-          Tabel Data Produk
-        </CCardHeader>
+        <CCardHeader>Tabel Data Produk</CCardHeader>
         <CCardBody>
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <GradientButton
-              onClick={() => setVisible(!visible)}
-            >
-              Add Data
-            </GradientButton>
+            <GradientButton onClick={() => setVisible(!visible)}>Add Data</GradientButton>
             <input
               type="text"
               placeholder="Search..."
@@ -378,6 +463,8 @@ const ManageProduk = () => {
             />
           </div>
           <DataTable
+            onRowClicked={(row) => handleEdit(row)}
+            pointerOnHover
             columns={columnsProduk}
             data={filteredData}
             progressPending={loading}
@@ -400,4 +487,3 @@ const ManageProduk = () => {
 }
 
 export default ManageProduk
-
