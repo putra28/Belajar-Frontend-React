@@ -1,9 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import {
-  CCard, CCardBody, CCardHeader, CToast, CToastBody, CButton,
-  CToastHeader, CModal, CModalBody, CModalHeader, CModalFooter,
-  CModalTitle, CForm, CFormLabel, CFormInput, CFormSelect,
-  CInputGroup, CInputGroupText, CRow, CCol
+  CCard,
+  CCardBody,
+  CCardHeader,
+  CToast,
+  CToastBody,
+  CButton,
+  CToastHeader,
+  CModal,
+  CModalBody,
+  CModalHeader,
+  CModalFooter,
+  CModalTitle,
+  CForm,
+  CFormLabel,
+  CFormInput,
+  CFormSelect,
+  CInputGroup,
+  CInputGroupText,
+  CRow,
+  CCol,
 } from '@coreui/react'
 import DataTable, { createTheme } from 'react-data-table-component'
 import styled from 'styled-components'
@@ -17,36 +33,36 @@ const GradientButton = styled(CButton)`
   margin-right: 10px;
   width: 150px;
   box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.6);
-`;
-
+`
 const TransparentButton = styled(CButton)`
   background: transparent;
-  border: 2px solid #3b398c; /* Border berwarna primary */
-  color: #3b398c; /* Sesuaikan warna teks jika diperlukan */
+  border: 2px solid #3b398c;
+  color: #3b398c;
   border-radius: 4px;
   padding: 8px;
   margin-right: 10px;
   width: 150px;
-  box-shadow: 0px 8px 20px rgba(59, 57, 140, 0.6); /* Shadow berwarna primary */
+  box-shadow: 0px 8px 20px rgba(59, 57, 140, 0.6);
   transition: all 0.3s ease;
+  margin: 0 auto;
+  display: block;
+`
 
-`;
-
-
-
-const API_BASE_URL = 'http://168.168.10.12:2805/api';
+const API_BASE_URL = 'http://168.168.10.12:2805/api'
 
 const ManageProduk = () => {
-  const [data, setData] = useState([]);
-  const [showToast, setShowToast] = useState(false);
-  const [toastMessage, setToastMessage] = useState('');
-  const [toastType, setToastType] = useState('success');
-  const [loading, setLoading] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [visible, setVisible] = useState(false);
-  const [visibleupdate, setVisibleUpdate] = useState(false);
-  const [kategori, setKategori] = useState([]);
-  const [subkategori, setSubkategori] = useState([]);
+  const [data, setData] = useState([])
+  const [showToast, setShowToast] = useState(false)
+  const [toastMessage, setToastMessage] = useState('')
+  const [toastType, setToastType] = useState('success')
+  const [loading, setLoading] = useState(false)
+  const [searchTerm, setSearchTerm] = useState('')
+  const [visible, setVisible] = useState(false)
+  const [visibleupdate, setVisibleUpdate] = useState(false)
+  const [kategori, setKategori] = useState([])
+  const [subkategori, setSubkategori] = useState([])
+  const [subkategoriedit, setSubkategoriedit] = useState([])
+  const [displayValue, setDisplayValue] = useState('');
   const [formData, setFormData] = useState({
     selectedKategori: '',
     selectedSubkategori: '',
@@ -59,103 +75,168 @@ const ManageProduk = () => {
     hargaProdukedit: '',
     stokProdukedit: '',
     selectedKategoriedit: '',
-    selectedSubkategoriedit: ''
-  });
+    selectedSubkategoriedit: '',
+  })
 
   const fetchData = async () => {
-    setLoading(true);
+    setLoading(true)
     try {
-      const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token')
       const headers = {
         'Content-Type': 'application/json',
-        'Authorization': token ? `${token}` : ''
-      };
+        Authorization: token ? `${token}` : '',
+      }
 
-    // Fetch kategori data
-    const kategoriRes = await fetch(`${API_BASE_URL}/kategori/getdatakategori`, { headers });
-    const kategoriData = await kategoriRes.json();
-    setKategori(kategoriData.data);
+      // Fetch kategori data
+      const kategoriRes = await fetch(`${API_BASE_URL}/kategori/getdatakategori`, { headers })
+      const kategoriData = await kategoriRes.json()
+      setKategori(kategoriData.data)
 
-    const produkRes = await fetch(`${API_BASE_URL}/produk/getdataproduk`, { headers });
-    const produkData = await produkRes.json();
-    if (produkData.status === 200) {
-      setData(produkData.data);
-    } else {
-      setData([]);
-      showToastMessage('Gagal mengambil data produk', 'Gagal');
-      return;
-    }
+      const produkRes = await fetch(`${API_BASE_URL}/produk/getdataproduk`, { headers })
+      const produkData = await produkRes.json()
+      if (produkData.status === 200) {
+        setData(produkData.data)
+      } else {
+        setData([])
+        showToastMessage('Gagal mengambil data produk', 'Gagal')
+        return
+      }
     } catch (error) {
-      console.error('Error fetching data:', error);
-      showToastMessage('Terjadi kesalahan saat mengambil data', 'Gagal');
+      console.error('Error fetching data:', error)
+      showToastMessage('Terjadi kesalahan saat mengambil data', 'Gagal')
     }
-    setLoading(false);
-  };
+    setLoading(false)
+  }
 
   useEffect(() => {
-    fetchData();
-  }, []);
+    fetchData()
+  }, [])
 
   const handleKategoriChange = (e) => {
-    const kategoriId = e.target.value;
-    const selectedKategori = kategori.find((kat) => kat.v_id_kategori === parseInt(kategoriId));
-    const subkategori = selectedKategori.v_subkategori;
-    setSubkategori(subkategori);
-  };
+    const kategoriId = e.target.value
+    const selectedKategori = kategori.find((kat) => kat.v_id_kategori === parseInt(kategoriId))
+    const subkategori = selectedKategori.v_subkategori
+    setSubkategori(subkategori)
+
+    setFormData((prev) => ({
+      ...prev,
+      selectedKategori: kategoriId,
+      selectedSubkategori: subkategori.length > 0 ? subkategori[0].v_id_subkategori : '',
+    }))
+  }
+
+  const handleKategorieditChange = (e) => {
+    const kategoriId = e.target.value
+    const selectedKategori = kategori.find((kat) => kat.v_id_kategori === parseInt(kategoriId))
+    const subkategoriedit = selectedKategori.v_subkategori
+    setSubkategoriedit(subkategoriedit)
+
+    setFormData((prev) => ({
+      ...prev,
+      selectedKategoriedit: kategoriId,
+      selectedSubkategoriedit:
+        subkategoriedit.length > 0 ? subkategoriedit[0].v_id_subkategori : '',
+    }))
+  }
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+
+    // Jika nama input adalah hargaProdukedit
+    if (name === "hargaProdukedit") {
+      // Hapus koma dan simpan nilai asli di formData
+      const rawValue = value.replace(/,/g, '');
+
+      // Update formData dengan nilai asli
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: rawValue,
+      }));
+
+      // Format nilai untuk ditampilkan di input
+      e.target.value = new Intl.NumberFormat().format(rawValue);
+    } else {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    }
+  };
+
+  const handleNumberChange = (e) => {
+    // Ambil nilai asli dari input tanpa koma
+    let value = e.target.value.replace(/,/g, ''); // Menghilangkan koma dari tampilan
+
+    // Cek apakah nilai input berupa angka
+    if (!isNaN(value)) {
+      // Simpan nilai asli ke state
+      setFormData({ ...formData, hargaProduk: value });
+
+      // Format nilai untuk tampilan dengan koma
+      const formattedValue = new Intl.NumberFormat('id-ID').format(value);
+
+      // Simpan nilai terformat untuk ditampilkan
+      setDisplayValue(formattedValue);
+    }
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     const submitData = {
-      p_id_kategori: formData.selectedKategori,
-      p_id_subkategori: formData.selectedSubkategori,
+      p_id_kategori: parseInt(formData.selectedKategori, 10),
+      p_id_subkategori: parseInt(formData.selectedSubkategori, 10),
       p_nama_produk: formData.namaProduk,
       p_harga_produk: parseInt(formData.hargaProduk, 10),
-    };
+    }
 
     try {
       const response = await sendRequest('produk/adddataproduk', 'POST', submitData);
       if (response.status === 200) {
-        await fetchData();
-        showToastMessage('Berhasil menambahkan produk', 'Berhasil');
+        await fetchData()
+        showToastMessage('Berhasil menambahkan produk', 'Berhasil')
       } else {
-        showToastMessage('Gagal menambahkan produk', 'Gagal');
+        console.log(response)
+        showToastMessage('Gagal menambahkan produk', 'Gagal')
       }
-      setVisible(false);
+      setVisible(false)
     } catch (error) {
-      showToastMessage('Terjadi Kesalahan', 'Gagal');
+      showToastMessage('Terjadi Kesalahan', 'Gagal')
     }
-  };
+  }
 
   const handleSubmitedit = async (e) => {
-    e.preventDefault();
+    e.preventDefault()
     const submitData = {
       p_id_produk: formData.idProdukedit,
       p_id_subkategori: formData.idSubKategoriedit,
       p_nama_produk: formData.namaProdukedit,
       p_harga_produk: parseInt(formData.hargaProdukedit, 10),
       p_stok_produk: parseInt(formData.stokProdukedit, 10),
-    };
-
-    try {
-      const response = await sendRequest('produk/updatedataproduk', 'POST', submitData);
-      if (response.status === 200) {
-        await fetchData();
-        showToastMessage('Berhasil mengubah produk', 'Berhasil');
-      } else {
-        showToastMessage('Gagal mengubah produk', 'Gagal');
-      }
-      setVisibleUpdate(false);
-    } catch (error) {
-      showToastMessage('Terjadi Kesalahan', 'Gagal');
     }
-  };
+
+    // console.log(submitData);
+    try {
+      const response = await sendRequest('produk/updatedataproduk', 'POST', submitData)
+      if (response.status === 200) {
+        await fetchData()
+        showToastMessage('Berhasil mengubah produk', 'Berhasil')
+      } else {
+        showToastMessage('Gagal mengubah produk', 'Gagal')
+      }
+      setVisibleUpdate(false)
+    } catch (error) {
+      showToastMessage('Terjadi Kesalahan', 'Gagal')
+    }
+  }
 
   const handleEdit = (row) => {
+    // Cari kategori yang dipilih berdasarkan ID kategori dari produk
+  const selectedKategori = kategori.find((kat) => kat.v_id_kategori === row.v_id_kategori);
+
+  // Set subkategori yang sesuai
+  const subkategoriTerkait = selectedKategori ? selectedKategori.v_subkategori : [];
+
+  setSubkategoriedit(subkategoriTerkait);
     setFormData({
       idProdukedit: row.v_id_produk,
       idKategoriedit: row.v_id_kategori,
@@ -163,56 +244,63 @@ const ManageProduk = () => {
       namaProdukedit: row.v_nama_produk,
       hargaProdukedit: row.v_harga_produk,
       stokProdukedit: row.v_stok_produk,
-      selectedKategoriedit: row.v_kategori_produk,
-      selectedSubkategoriedit: row.v_subkategori_produk
-    });
-    setVisibleUpdate(true);
-  };
+      selectedKategoriedit: row.v_id_kategori,
+      selectedSubkategoriedit: row.v_id_subkategori,
+    })
+    setVisibleUpdate(true)
+  }
 
   const handleDelete = async (productId) => {
     try {
-      const response = await sendRequest('produk/deletedataproduk', 'POST', { p_id_produk: productId });
+      const response = await sendRequest('produk/deletedataproduk', 'POST', {
+        p_id_produk: productId,
+      })
       if (response.status === 200) {
-        await fetchData();
-        showToastMessage('Berhasil menghapus produk', 'Berhasil');
+        await fetchData()
+        showToastMessage('Berhasil menghapus produk', 'Berhasil')
       } else {
-        showToastMessage('Gagal menghapus produk', 'Gagal');
+        showToastMessage('Gagal menghapus produk', 'Gagal')
       }
     } catch (error) {
-      showToastMessage('Terjadi Kesalahan', 'Gagal');
+      showToastMessage('Terjadi Kesalahan', 'Gagal')
     }
-  };
+  }
 
   const sendRequest = async (endpoint, method, body) => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('token')
     const response = await fetch(`${API_BASE_URL}/${endpoint}`, {
       method,
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': token ? `${token}` : ''
+        Authorization: token ? `${token}` : '',
       },
-      body: JSON.stringify(body)
-    });
-    return response.json();
-  };
+      body: JSON.stringify(body),
+    })
+    return response.json()
+  }
 
   const showToastMessage = (message, type) => {
-    setToastMessage(message);
-    setToastType(type);
-    setShowToast(true);
-  };
+    setToastMessage(message)
+    setToastType(type)
+    setShowToast(true)
+  }
 
   const formatRupiah = (number) => {
-    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(number);
-  };
+    return new Intl.NumberFormat('id-ID', {
+      style: 'currency',
+      currency: 'IDR',
+      minimumFractionDigits: 0,
+      maximumFractionDigits: 0,
+    }).format(number)
+  }
 
   const columnsProduk = [
     { name: 'No.', selector: (row, index) => index + 1, sortable: true },
-    { name: 'Kategori', selector: row => row.v_kategori_produk, sortable: true },
-    { name: 'Sub-Kategori', selector: row => row.v_subkategori_produk, sortable: true },
-    { name: 'Nama Produk', selector: row => row.v_nama_produk, sortable: true },
-    { name: 'Harga Produk', selector: row => formatRupiah(row.v_harga_produk), sortable: true },
-    { name: 'Stok Produk', selector: row => row.v_stok_produk, sortable: true },
+    { name: 'Kategori', selector: (row) => row.v_kategori_produk, sortable: true },
+    { name: 'Sub-Kategori', selector: (row) => row.v_subkategori_produk, sortable: true },
+    { name: 'Nama Produk', selector: (row) => row.v_nama_produk, sortable: true },
+    { name: 'Harga Produk', selector: (row) => formatRupiah(row.v_harga_produk), sortable: true },
+    { name: 'Stok Produk', selector: (row) => row.v_stok_produk, sortable: true },
     {
       name: 'Aksi',
       cell: (row) => (
@@ -223,16 +311,22 @@ const ManageProduk = () => {
       center: true,
       width: '150px',
     },
-  ];
+  ]
 
-  const filteredData = data.filter(item =>
-    Object.values(item).some(val => val.toString().toLowerCase().includes(searchTerm.toLowerCase()))
-  );
+  const filteredData = data.filter((item) =>
+    Object.values(item).some((val) =>
+      val.toString().toLowerCase().includes(searchTerm.toLowerCase()),
+    ),
+  )
 
-  createTheme('transparent', {
-    text: { primary: 'white' },
-    background: { default: 'transparent' }
-  }, 'dark');
+  createTheme(
+    'transparent',
+    {
+      text: { primary: 'white' },
+      background: { default: 'transparent' },
+    },
+    'dark',
+  )
 
   return (
     <>
@@ -244,7 +338,9 @@ const ManageProduk = () => {
           style={{ zIndex: 1060 }}
           onClick={() => setShowToast(false)}
         >
-          <CToastHeader style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)' }}>
+          <CToastHeader
+            style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)' }}
+          >
             <strong className="me-auto">{toastType}</strong>
           </CToastHeader>
           <CToastBody>{toastMessage}</CToastBody>
@@ -252,24 +348,26 @@ const ManageProduk = () => {
       )}
 
       <CModal visible={visible} onClose={() => setVisible(false)} aria-labelledby="ModalAddProduk">
-        <CModalHeader style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)'}}>
+        <CModalHeader style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)' }}>
           <CModalTitle id="ModalAddProduk">Tambah Data Produk</CModalTitle>
         </CModalHeader>
         <CForm onSubmit={handleSubmit}>
           <CModalBody>
             <CRow className="mb-3">
               <CCol sm={4}>
-                <CFormLabel htmlFor="selectedKategori" className="col-form-label">Kategori</CFormLabel>
+                <CFormLabel htmlFor="selectedKategori" className="col-form-label">
+                  Kategori
+                </CFormLabel>
               </CCol>
               <CCol sm={8}>
                 <CFormSelect
                   id="selectedKategori"
                   name="selectedKategori"
                   onChange={(e) => {
-                    handleInputChange(e);
-                    handleKategoriChange(e);
+                    handleInputChange(e)
+                    handleKategoriChange(e)
                   }}
-                  value={kategori}
+                  value={formData.selectedKategori} // Change this line
                 >
                   <option value="">Pilih Kategori</option>
                   {kategori.map((kat) => (
@@ -330,44 +428,67 @@ const ManageProduk = () => {
                 <CInputGroup>
                   <CInputGroupText id="basic-addon1">Rp.</CInputGroupText>
                   <CFormInput
-                    type="number"
+                    type="text"
                     id="hargaProduk"
                     name="hargaProduk"
-                    value={formData.hargaProduk}
-                    onChange={handleInputChange}
+                    value={displayValue}
+                    onChange={handleNumberChange}
+                    placeholder="Masukkan harga"
                   />
                 </CInputGroup>
               </CCol>
             </CRow>
           </CModalBody>
           <CModalFooter>
-            <CButton style={{ background: 'linear-gradient(135deg, #450707, #a10808)', border: '0px' }} onClick={() => setVisible(false)}>
+            <CButton
+              style={{ background: 'linear-gradient(135deg, #450707, #a10808)', border: '0px' }}
+              onClick={() => setVisible(false)}
+            >
               Close
             </CButton>
-            <CButton style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)', border: '0px' }} type="submit">Save changes</CButton>
+            <CButton
+              style={{
+                background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)',
+                border: '0px',
+              }}
+              type="submit"
+            >
+              Save changes
+            </CButton>
           </CModalFooter>
         </CForm>
       </CModal>
 
-      <CModal visible={visibleupdate} onClose={() => setVisibleUpdate(false)} aria-labelledby="ModalUpdateProduk">
-        <CModalHeader style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)'}}>
+      <CModal
+        visible={visibleupdate}
+        onClose={() => setVisibleUpdate(false)}
+        aria-labelledby="ModalUpdateProduk"
+      >
+        <CModalHeader style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)' }}>
           <CModalTitle id="ModalUpdateProduk">Update Data Produk</CModalTitle>
         </CModalHeader>
         <CForm onSubmit={handleSubmitedit}>
           <CModalBody>
             <CRow className="mb-3">
               <CCol sm={4}>
-                <CFormLabel htmlFor="selectedKategoriedit" className="col-form-label">Kategori</CFormLabel>
+                <CFormLabel htmlFor="selectedKategoriedit" className="col-form-label">
+                  Kategori
+                </CFormLabel>
               </CCol>
               <CCol sm={8}>
-                <CFormInput
-                  type="text"
-                  id="selectedKategoriedit"
+                <CFormSelect
                   name="selectedKategoriedit"
                   value={formData.selectedKategoriedit}
-                  onChange={handleInputChange}
+                  onChange={handleKategorieditChange}
                   disabled
-                />
+                >
+                  <option value="">Pilih Kategori</option>
+                  {kategori.map((kat) => (
+                    <option key={kat.v_id_kategori} value={kat.v_id_kategori}>
+                      {kat.v_nama_kategori}
+                    </option>
+                  ))}
+                </CFormSelect>
               </CCol>
             </CRow>
             <CRow className="mb-3">
@@ -376,19 +497,16 @@ const ManageProduk = () => {
               </CCol>
               <CCol sm={8}>
                 <CFormSelect
-                  id="selectedSubkategoriedit"
                   name="selectedSubkategoriedit"
-                  onChange={handleInputChange}
                   value={formData.selectedSubkategoriedit}
+                  onChange={handleInputChange}
                 >
-                  <option value="">Pilih Sub-Kategori</option>
-                  {subkategori
-                    .filter(sub => sub.v_name_kategori === formData.selectedKategoriedit)
-                    .map((sub) => (
-                      <option key={sub.v_name_subkategori} value={sub.v_name_subkategori}>
-                        {sub.v_name_subkategori}
-                      </option>
-                    ))}
+                  <option value="">Pilih Sub - kategori</option>
+                  {subkategoriedit.map((sub) => (
+                    <option key={sub.v_id_subkategori} value={sub.v_id_subkategori}>
+                      {sub.v_nama_subkategori}
+                    </option>
+                  ))}
                 </CFormSelect>
               </CCol>
             </CRow>
@@ -414,10 +532,10 @@ const ManageProduk = () => {
                 <CInputGroup>
                   <CInputGroupText id="basic-addon1">Rp.</CInputGroupText>
                   <CFormInput
-                    type="number"
+                    type="text"
                     id="hargaProdukedit"
                     name="hargaProdukedit"
-                    value={formData.hargaProdukedit}
+                    value={formData.hargaProdukedit ? new Intl.NumberFormat().format(formData.hargaProdukedit) : ''}
                     onChange={handleInputChange}
                   />
                 </CInputGroup>
@@ -442,10 +560,21 @@ const ManageProduk = () => {
             </CRow>
           </CModalBody>
           <CModalFooter>
-            <CButton style={{ background: 'linear-gradient(135deg, #450707, #a10808)', border: '0px' }} onClick={() => setVisibleUpdate(false)}>
+            <CButton
+              style={{ background: 'linear-gradient(135deg, #450707, #a10808)', border: '0px' }}
+              onClick={() => setVisibleUpdate(false)}
+            >
               Close
             </CButton>
-            <CButton style={{ background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)', border: '0px' }} type="submit">Save changes</CButton>
+            <CButton
+              style={{
+                background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)',
+                border: '0px',
+              }}
+              type="submit"
+            >
+              Save changes
+            </CButton>
           </CModalFooter>
         </CForm>
       </CModal>
@@ -459,13 +588,13 @@ const ManageProduk = () => {
               type="text"
               placeholder="Search..."
               value={searchTerm}
-              onChange={e => setSearchTerm(e.target.value)}
+              onChange={(e) => setSearchTerm(e.target.value)}
               style={{
                 width: '20%',
                 padding: '8px',
                 borderRadius: '4px',
                 border: '1px solid transparent',
-                backgroundColor: '#1d222b'
+                backgroundColor: '#1d222b',
               }}
             />
           </div>
@@ -481,10 +610,10 @@ const ManageProduk = () => {
               rangeSeparatorText: 'dari',
               selectAllRowsItem: true,
               selectAllRowsItemText: 'Semua',
-              className: 'CustomDropdownMenu'
+              className: 'CustomDropdownMenu',
             }}
             highlightOnHover
-            theme='transparent'
+            theme="transparent"
             subHeader
           />
         </CCardBody>
