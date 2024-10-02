@@ -84,14 +84,14 @@ const ManageKategori = () => {
 
       if (result.status === 200) {
         setData(result.data);
-        console.log(result.data);
+        showToastMessage('Berhasil Mengambil Data Kategori', 'Berhasil')
       } else {
         setData([]);
-        showToastMessage('Gagal mengambil data kategori', 'Gagal');
+        showToastMessage('Gagal Mengambil Data Kategori', 'Gagal');
       }
     } catch (error) {
       console.error('Error fetching data:', error);
-      showToastMessage('Terjadi kesalahan saat mengambil data', 'Gagal');
+      showToastMessage('Terjadi Kesalahan Saat Mengambil Data', 'Gagal');
     }
     setLoading(false);
   };
@@ -123,10 +123,10 @@ const ManageKategori = () => {
       const response = await sendRequest('kategori/adddatakategori', 'POST', submitData);
       if (response.status === 200) {
         await fetchData()
-        showToastMessage('Berhasil menambahkan kategori', 'Berhasil')
+        showToastMessage('Berhasil Menambahkan Kategori', 'Berhasil')
       } else {
         console.log(response)
-        showToastMessage('Gagal menambahkan kategori', 'Gagal')
+        showToastMessage('Gagal Menambahkan Kategori', 'Gagal')
       }
       setAddKategoriModalVisible(false)
     } catch (error) {
@@ -145,10 +145,10 @@ const ManageKategori = () => {
       const response = await sendRequest('kategori/updatedatakategori', 'POST', submitData);
       if (response.status === 200) {
         await fetchData()
-        showToastMessage('Berhasil mengubah kategori', 'Berhasil')
+        showToastMessage('Berhasil Mengubah Kategori', 'Berhasil')
       } else {
         console.log(response)
-        showToastMessage('Gagal mengubah kategori', 'Gagal')
+        showToastMessage('Gagal Mengubah Kategori', 'Gagal')
       }
       setSubkategoriModalVisible(false)
     } catch (error) {
@@ -168,10 +168,10 @@ const ManageKategori = () => {
       const response = await sendRequest('kategori/updatedatasubkategori', 'POST', submitData);
       if (response.status === 200) {
         await fetchData()
-        showToastMessage('Berhasil mengubah sub-kategori', 'Berhasil')
+        showToastMessage('Berhasil Mengubah Sub-Kategori', 'Berhasil')
       } else {
         console.log(response)
-        showToastMessage('Gagal mengubah sub-kategori', 'Gagal')
+        showToastMessage('Gagal Mengubah Sub-Kategori', 'Gagal')
       }
       setSubkategoriUpdateModalVisible(false)
     } catch (error) {
@@ -187,9 +187,9 @@ const ManageKategori = () => {
       console.log(response);
       if (response.status === 200) {
         await fetchData()
-        showToastMessage('Berhasil menghapus kategori', 'Berhasil')
+        showToastMessage('Berhasil Menghapus Kategori', 'Berhasil')
       } else {
-        showToastMessage('Gagal menghapus kategori', 'Gagal')
+        showToastMessage('Gagal Menghapus Kategori', 'Gagal')
       }
     } catch (error) {
       showToastMessage('Terjadi Kesalahan', 'Gagal')
@@ -204,9 +204,9 @@ const ManageKategori = () => {
       console.log(response);
       if (response.status === 200) {
         await fetchData()
-        showToastMessage('Berhasil menghapus sub-kategori', 'Berhasil')
+        showToastMessage('Berhasil Menghapus Sub-Kategori', 'Berhasil')
       } else {
-        showToastMessage('Gagal menghapus sub-kategori', 'Gagal')
+        showToastMessage('Gagal Menghapus Sub-Kategori', 'Gagal')
       }
     } catch (error) {
       showToastMessage('Terjadi Kesalahan', 'Gagal')
@@ -259,10 +259,10 @@ const ManageKategori = () => {
       const response = await sendRequest('kategori/adddatasubkategori', 'POST', submitData);
       if (response.status === 200) {
         await fetchData()
-        showToastMessage('Berhasil menambahkan sub-kategori', 'Berhasil')
+        showToastMessage('Berhasil Menambahkan Sub-Kategori', 'Berhasil')
       } else {
         console.log(response)
-        showToastMessage('Gagal menambahkan sub-kategori', 'Gagal')
+        showToastMessage('Gagal Menambahkan Sub-Kategori', 'Gagal')
       }
       setSubkategoriModalVisible(false)
     } catch (error) {

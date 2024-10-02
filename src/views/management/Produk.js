@@ -96,14 +96,15 @@ const ManageProduk = () => {
       const produkData = await produkRes.json()
       if (produkData.status === 200) {
         setData(produkData.data)
+        showToastMessage('Berhasil Mengambil Data Produk', 'Berhasil')
       } else {
         setData([])
-        showToastMessage('Gagal mengambil data produk', 'Gagal')
+        showToastMessage('Gagal Mengambil Data Produk', 'Gagal')
         return
       }
     } catch (error) {
       console.error('Error fetching data:', error)
-      showToastMessage('Terjadi kesalahan saat mengambil data', 'Gagal')
+      showToastMessage('Terjadi Kesalahan Saat Mengambil Data', 'Gagal')
     }
     setLoading(false)
   }
@@ -193,10 +194,10 @@ const ManageProduk = () => {
       const response = await sendRequest('produk/adddataproduk', 'POST', submitData);
       if (response.status === 200) {
         await fetchData()
-        showToastMessage('Berhasil menambahkan produk', 'Berhasil')
+        showToastMessage('Berhasil Menambahkan Produk', 'Berhasil')
       } else {
         console.log(response)
-        showToastMessage('Gagal menambahkan produk', 'Gagal')
+        showToastMessage('Gagal Menambahkan Produk', 'Gagal')
       }
       setVisible(false)
     } catch (error) {
@@ -219,9 +220,9 @@ const ManageProduk = () => {
       const response = await sendRequest('produk/updatedataproduk', 'POST', submitData)
       if (response.status === 200) {
         await fetchData()
-        showToastMessage('Berhasil mengubah produk', 'Berhasil')
+        showToastMessage('Berhasil Mengubah Produk', 'Berhasil')
       } else {
-        showToastMessage('Gagal mengubah produk', 'Gagal')
+        showToastMessage('Gagal Mengubah Produk', 'Gagal')
       }
       setVisibleUpdate(false)
     } catch (error) {
@@ -257,9 +258,9 @@ const ManageProduk = () => {
       })
       if (response.status === 200) {
         await fetchData()
-        showToastMessage('Berhasil menghapus produk', 'Berhasil')
+        showToastMessage('Berhasil Menghapus Produk', 'Berhasil')
       } else {
-        showToastMessage('Gagal menghapus produk', 'Gagal')
+        showToastMessage('Gagal Menghapus Produk', 'Gagal')
       }
     } catch (error) {
       showToastMessage('Terjadi Kesalahan', 'Gagal')
