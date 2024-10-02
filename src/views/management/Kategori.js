@@ -411,6 +411,7 @@ const ManageKategori = () => {
                           <CCol sm={8}>
                             <CFormInput
                               type="text"
+                              className="mb-3"
                               id="namaSubKategoriadd"
                               name="namaSubKategoriadd"
                               onChange={handleInputChange}
