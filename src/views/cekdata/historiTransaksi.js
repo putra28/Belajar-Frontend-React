@@ -233,6 +233,8 @@ const CekdataTransaksi = () => {
                   name="tanggalTransaksi"
                   value={formData.tanggalTransaksi}
                   onChange={handleInputChange}
+                  readOnly
+                  plainText
                 />
               </CCol>
             </CRow>
@@ -249,6 +251,8 @@ const CekdataTransaksi = () => {
                   name="namaPetugas"
                   value={formData.namaPetugas}
                   onChange={handleInputChange}
+                  readOnly
+                  plainText
                 />
               </CCol>
             </CRow>
@@ -265,6 +269,8 @@ const CekdataTransaksi = () => {
                   name="namaPelanggan"
                   value={formData.namaPelanggan}
                   onChange={handleInputChange}
+                  readOnly
+                  plainText
                 />
               </CCol>
             </CRow>
@@ -281,6 +287,8 @@ const CekdataTransaksi = () => {
                   name="kuantitasTransaksi"
                   value={formData.kuantitasTransaksi}
                   onChange={handleInputChange}
+                  readOnly
+                  plainText
                 />
               </CCol>
             </CRow>
@@ -297,6 +305,8 @@ const CekdataTransaksi = () => {
                   name="totalBayar"
                   value={formData.totalBayar}
                   onChange={handleInputChange}
+                  readOnly
+                  plainText
                 />
               </CCol>
             </CRow>
@@ -313,6 +323,8 @@ const CekdataTransaksi = () => {
                   name="totalHarga"
                   value={formData.totalHarga}
                   onChange={handleInputChange}
+                  readOnly
+                  plainText
                 />
               </CCol>
             </CRow>
@@ -329,6 +341,8 @@ const CekdataTransaksi = () => {
                   name="totalKembalian"
                   value={formData.totalKembalian}
                   onChange={handleInputChange}
+                  readOnly
+                  plainText
                 />
               </CCol>
             </CRow>
@@ -350,15 +364,6 @@ const CekdataTransaksi = () => {
             >
               Close
             </CButton>
-            <CButton
-              style={{
-                background: 'linear-gradient(135deg, #1c1b38, #3b398c, #6261cc)',
-                border: '0px',
-              }}
-              type="submit"
-            >
-              Save changes
-            </CButton>
           </CModalFooter>
         </CForm>
       </CModal>
@@ -366,7 +371,7 @@ const CekdataTransaksi = () => {
       <CCard className="mb-4">
         <CCardHeader>Tabel Data Kategori</CCardHeader>
         <CCardBody>
-          <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
             <input
               type="text"
               placeholder="Search..."

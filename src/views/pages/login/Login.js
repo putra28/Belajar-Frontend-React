@@ -16,6 +16,7 @@ import {
 } from '@coreui/react'
 import CIcon from '@coreui/icons-react'
 import { cilLockLocked, cilUser } from '@coreui/icons'
+import CryptoJS from 'crypto-js'
 
 const Login = () => {
   const [loading, setLoading] = useState(false);
@@ -46,6 +47,8 @@ const Login = () => {
       setLoading(false);
       if (data.notification_response === "Berhasil Login") {
         // Store token and user data in localStorage
+        const webToken = CryptoJS.MD5(data.token).toString();
+        localStorage.setItem('webtoken', webToken);
         localStorage.setItem('token', data.token);
         // console.log('Token stored:', data.token);  // Log the token
 
