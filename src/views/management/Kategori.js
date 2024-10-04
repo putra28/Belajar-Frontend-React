@@ -301,7 +301,7 @@ const ManageKategori = () => {
   };
 
   const filteredData = data.filter(item =>
-    item.v_nama_kategori.toLowerCase().includes(searchTerm.toLowerCase())
+    Object.keys(item).some(key => item[key].toString().toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   createTheme('transparent', {

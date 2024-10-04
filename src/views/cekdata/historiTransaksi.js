@@ -185,7 +185,7 @@ const CekdataTransaksi = () => {
   };
 
   const filteredData = data.filter(item =>
-    item.v_nama_pelanggan.toLowerCase().includes(searchTerm.toLowerCase())
+    Object.keys(item).some(key => item[key].toString().toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   createTheme('transparent', {
@@ -369,7 +369,7 @@ const CekdataTransaksi = () => {
       </CModal>
 
       <CCard className="mb-4">
-        <CCardHeader>Tabel Data Kategori</CCardHeader>
+        <CCardHeader>Tabel Histori Transaksi</CCardHeader>
         <CCardBody>
           <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '20px' }}>
             <input

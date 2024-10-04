@@ -314,11 +314,9 @@ const ManageProduk = () => {
     },
   ]
 
-  const filteredData = data.filter((item) =>
-    Object.values(item).some((val) =>
-      val.toString().toLowerCase().includes(searchTerm.toLowerCase()),
-    ),
-  )
+  const filteredData = data.filter(item =>
+    Object.keys(item).some(key => item[key].toString().toLowerCase().includes(searchTerm.toLowerCase()))
+  );
 
   createTheme(
     'transparent',
