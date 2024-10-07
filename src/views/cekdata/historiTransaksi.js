@@ -161,16 +161,6 @@ const CekdataTransaksi = () => {
     { name: 'Nama Produk', selector: row => row.v_name_produk, sortable: true },
     { name: 'Harga Produk', selector: row => row.v_price_produk, sortable: true },
     { name: 'Kuantitas', selector: row => row.v_quantity_produk, sortable: true },
-    // {
-    //   name: 'Aksi',
-    //   cell: (row) => (
-    //     <TransparentButton onClick={() => handleDeletedet(row.v_id_detail_transaksi)}>
-    //       Hapus
-    //     </TransparentButton>
-    //   ),
-    //   center: true,
-    //   width: '150px',
-    // },
   ];
 
   const handleRowClick = (row) => {

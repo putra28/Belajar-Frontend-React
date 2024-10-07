@@ -116,17 +116,7 @@ const CekdataStok = () => {
     { name: 'Stok Semula', selector: row => row.stok_semula, sortable: true },
     { name: 'Perubahan Stok', selector: row => row.perubahan_stok, sortable: true },
     { name: 'Alasan Perubahan', selector: row => row.aksi_stok, sortable: true },
-    { name: 'Date log', selector: row => row.tanggal_laporan, sortable: true },
-    // {
-    //   name: 'Aksi',
-    //   cell: (row) => (
-    //     <TransparentButton onClick={() => handleDelete(row.v_id_transaksi)}>
-    //       Hapus
-    //     </TransparentButton>
-    //   ),
-    //   center: true,
-    //   width: '150px',
-    // },
+    { name: 'Date laporan', selector: row => row.tanggal_laporan, sortable: true },
   ];
 
   const filteredData = data.filter(item =>

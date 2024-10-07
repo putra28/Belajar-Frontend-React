@@ -123,16 +123,6 @@ const CekdataAktifitas = () => {
     { name: 'Nama Petugas', selector: row => row.v_nama_pengguna, sortable: true },
     { name: 'Jenis Aktifitas', selector: row => row.v_activity_log, sortable: true },
     { name: 'Date log', selector: row => row.v_date_log, sortable: true },
-    // {
-    //   name: 'Aksi',
-    //   cell: (row) => (
-    //     <TransparentButton onClick={() => handleDelete(row.v_id_transaksi)}>
-    //       Hapus
-    //     </TransparentButton>
-    //   ),
-    //   center: true,
-    //   width: '150px',
-    // },
   ];
 
   const filteredData = data.filter(item =>
